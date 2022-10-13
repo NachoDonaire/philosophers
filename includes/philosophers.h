@@ -10,6 +10,7 @@ typedef struct philos_data{
 	int	r_fork;
 	int	l_fork;
 	int	is_dead;
+	int	piddy;
 	pthread_t	pthread;
 }	t_philos_data;
 

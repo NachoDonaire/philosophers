@@ -53,6 +53,10 @@ void	preliminar(t_gen_data *gen_data, char **s)
 	i = 0;
 	gen_data->n_philo = ft_atoi(s[1]);
 	gen_data->n_philos_dead = 0;
+/*	gen_data->t_die = ft_atoi(s[2]) * 1000;
+	gen_data->t_eat = ft_atoi(s[3]) * 1000;
+	gen_data->t_sleep = ft_atoi(s[4]) * 1000;
+	*/
 	gen_data->forks = malloc(sizeof(pthread_mutex_t ) * gen_data->n_philo);
 	//gen_data->util = malloc(sizeof(pthread_mutex_t ) * gen_data->n_philo);
 	while (i < gen_data->n_philo)
@@ -103,22 +107,26 @@ void	needed_free(t_gen_data *gen_data)
 
 void	eat(t_gen_data	*gen_data)
 {
-	//pthread_mutex_lock(&gen_data->forks[gen_data->philos[gen_data->pid].r_fork]);
-	//pthread_mutex_lock(&gen_data->forks[gen_data->philos[gen_data->pid].l_fork]);
 	pthread_mutex_lock(&gen_data->util);
+	pthread_mutex_lock(&gen_data->forks[gen_data->philos[gen_data->pid].r_fork]);
+	pthread_mutex_lock(&gen_data->forks[gen_data->philos[gen_data->pid].l_fork]);
 	printf("El filósofo %d esta jalando\n", gen_data->pid);
 	usleep(2000000);
 	gen_data->philos[gen_data->pid].is_dead = 1;
-	pthread_mutex_unlock(&gen_data->util);
-	//pthread_mutex_unlock(&gen_data->forks[gen_data->philos[gen_data->pid].r_fork]);
-	//pthread_mutex_unlock(&gen_data->forks[gen_data->philos[gen_data->pid].l_fork]);
+	pthread_mutex_unlock(&gen_data->forks[gen_data->philos[gen_data->pid].r_fork]);
+	pthread_mutex_unlock(&gen_data->forks[gen_data->philos[gen_data->pid].l_fork]);
+		
 }
 
 void	increment_pid(t_gen_data *gen_data)
 {
-	pthread_mutex_lock(&gen_data->util);
+	//pthread_mutex_lock(&gen_data->util);
+	gen_data->n_philos_dead++;
 	gen_data->pid++;
 	pthread_mutex_unlock(&gen_data->util);
+
+	//pthread_mutex_lock(&gen_data->util);
+	//pthread_mutex_unlock(&gen_data->util);
 }
 
 void	*routine(void	*tra)
@@ -128,7 +136,7 @@ void	*routine(void	*tra)
 	gen_data = (t_gen_data *) tra;
 	eat(gen_data);
 	printf("el filosofo %d ha terminado de comer\n", gen_data->pid);
-	gen_data->pid++;
+	increment_pid(gen_data);
 	/*while (gen_data->philos[gen_data->pid].is_dead == 0)
 	{
 		eat(gen_data);
@@ -165,8 +173,8 @@ int	main(int arg, char **args)
 		if (0 != pthread_create(&gen_data->philos[i].pthread, NULL, routine, gen_data))
 			printf("no se creo bien el hilo");
 		i++;
-//		gen_data->pid++;
 	}
+	while (gen_data->n_philos_dead < gen_data->n_philo);
 	i = 0;
 	while (gen_data->pid < gen_data->n_philo)
 	{
