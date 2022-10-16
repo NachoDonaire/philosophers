@@ -1,6 +1,6 @@
 SDIR = src/
 NAME = philo
-SRCS = philosophers.c ft_atoi.c
+SRCS = philosophers.c ft_atoi.c handle_threads.c initialise_data.c
 ODIR = objs/
 CC = gcc
 RM = rm -rf

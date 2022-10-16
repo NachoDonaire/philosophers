@@ -1,105 +1,5 @@
 #include "../includes/philosophers.h"
 
-void	*routineA()
-{
-	int 	i;
-	int	a;
-
-	a = 0;
-	i = 0;
-	
-	while (i++ < 2000)
-		a++;
-	return (0);
-}
-/*
-void	*routineB()
-{
-	int	i;
-
-	i = 0;
-	while (i < 2001)
-	{
-		i++;
-		a--;
-	}
-	return (0);
-}
-*/
-
-void	fill_forks(t_philos_data *philos, int n)
-{
-	int	i;
-	int	y;
-
-	y = 0;
-	i = 0;
-	while (y < n)
-	{
-		philos[y].r_fork = i;
-		if (i == 0)
-			philos[y].l_fork = n - 1;
-		else
-			philos[y].l_fork = i - 1;
-		y++;
-		i++;
-	}
-}
-
-void	fill_gen_philos(t_philos_data *philos, int n)
-{
-	int	i;
-	int	y;
-
-	y = 0;
-	i = 0;
-	while (i < n)
-	{
-		philos[i].gen_data.forks = malloc(sizeof(pthread_mutex_t) * n);
-		philos[i].piddy = i;
-		while (y < n)
-		{
-			pthread_mutex_init(&philos[i].gen_data.forks[y], NULL);
-			y++;
-		}
-		pthread_mutex_init(&philos[i].gen_data.util, NULL);
-		i++;
-	}
-}
-
-
-void	preliminar(t_philos_data *philos, char **s)
-{
-	int	n;
-
-	n = ft_atoi(s[1]);
-	fill_gen_philos(philos, n);
-/*	gen_data->t_die = ft_atoi(s[2]) * 1000;
-	gen_data->t_eat = ft_atoi(s[3]) * 1000;
-	gen_data->t_sleep = ft_atoi(s[4]) * 1000;
-	*/
-//	gen_data->forks = malloc(sizeof(pthread_mutex_t ) * gen_data->n_philo);
-	//gen_data->util = malloc(sizeof(pthread_mutex_t ) * gen_data->n_philo);
-//	while (i < gen_data->n_philo)
-//		pthread_mutex_init(&gen_data->forks[i++], NULL);
-//	i = 0;
-	//while (i < gen_data->n_philo)
-//	pthread_mutex_init(&gen_data->util, NULL);
-//	i = 0;
-//	gen_data->philos = malloc(sizeof(t_philos_data) * (gen_data->n_philo + 1));
-//	gen_data->n_philos = malloc(sizeof(pthread_t *) * (gen_data->n_philo + 1));
-	//pthread_mutex_init(gen_data->forks, NULL);
-//	gen_data->pid = 0;
-//	while (i < gen_data->n_philo)
-//	{
-		//gen_data->n_philos[i] = i;
-//		gen_data->philos[i].piddy = i;
-//		gen_data->philos[i].is_dead = 0;
-//		i++;
-//	}
-	fill_forks(philos, n);
-}
-
 void	check_arg(int arg)
 {
 	if (arg < 5 || arg > 6)
@@ -127,81 +27,80 @@ void	needed_free(t_gen_data *gen_data)
 }
 */
 
-void	eat(t_philos_data *philos)
+void	philos_log(char *s, t_philos_data *philos)
 {
-//	pthread_mutex_lock(&gen_data->util);
-	pthread_mutex_lock(&philos[philos->);
-	pthread_mutex_lock(&gen_data->forks[gen_data->philos[gen_data->pid].l_fork]);
-	printf("El filósofo %d esta jalando\n", gen_data->pid);
-	usleep(2000000);
-	gen_data->philos[gen_data->pid].is_dead = 1;
-	pthread_mutex_unlock(&gen_data->forks[gen_data->philos[gen_data->pid].r_fork]);
-	pthread_mutex_unlock(&gen_data->forks[gen_data->philos[gen_data->pid].l_fork]);
-		
+	pthread_mutex_lock(&philos->gen_data->wrt);
+	//printf("--%d--\n", philos->piddy);
+	gettimeofday(&philos->philo_time, NULL);
+//	printf("philos_time:%ldstart:%ldresta:%ldsujeto:%daccion:%s\n", philos->philo_time.tv_usec, philos->gen_data->start_time.tv_usec, philos->philo_time.tv_usec - philos->gen_data->start_time.tv_usec, philos->piddy, s);
+	printf("%ld %d %s\n", philos->philo_time.tv_usec - philos->helper.tv_usec, philos->piddy, s);
+	gettimeofday(&philos->helper, NULL);
+	pthread_mutex_unlock(&philos->gen_data->wrt);
+}
+void	check_dead(t_philos_data *philos)
+{
+	pthread_mutex_lock(&philos->gen_data->util);
+	//gettimeofday(&philos->gen_data->end_time[philos->piddy], NULL);
+	gettimeofday(&philos->philo_time, NULL);
+	if (philos->philo_time.tv_usec - philos->helper.tv_usec >= philos->gen_data->t_die * 1000)
+	{
+		philos->state = 0;
+		philos_log("died", philos);
+		pthread_mutex_unlock(&philos->gen_data->util);
+		exit(0);
+	}
+	if (philos->n_eat == philos->gen_data->n_p_eat && philos->gen_data->n_p_eat > 0)
+	{
+		philos->state = 0;
+	}
+	pthread_mutex_unlock(&philos->gen_data->util);
 }
 
-void	increment_pid(t_gen_data *gen_data)
-{
-	//pthread_mutex_lock(&gen_data->util);
-	gen_data->n_philos_dead++;
-	gen_data->pid++;
-	pthread_mutex_unlock(&gen_data->util);
 
-	//pthread_mutex_lock(&gen_data->util);
-	//pthread_mutex_unlock(&gen_data->util);
+
+void	eat(t_philos_data *philos)
+{
+	pthread_mutex_lock(&philos->gen_data->forks[philos->r_fork]);
+	pthread_mutex_lock(&philos->gen_data->forks[philos->l_fork]);
+	philos->n_eat++;
+	check_dead(philos);
+	philos_log("has taken a fork", philos);
+	philos_log("is eating", philos);
+	usleep(philos->gen_data->t_eat * 1000);
+	pthread_mutex_unlock(&philos->gen_data->forks[philos->r_fork]);
+	pthread_mutex_unlock(&philos->gen_data->forks[philos->l_fork]);
+		
 }
 
 void	*routine(void	*tra)
 {
-	t_philos_data	*philos
+	t_philos_data	*philos;
 	
 	philos = (t_philos_data *)tra;
-	eat(gen_data);
-	printf("el filosofo %d ha terminado de comer\n", gen_data->pid);
-	increment_pid(gen_data);
-	while (gen_data->philos[gen_data->pid].is_dead == 0)
+	while (philos->state != 0)
 	{
-		eat(gen_data);
-		printf("El filósofo %d está pensando(%d)\n", gen_data->pid, gen_data->philos[gen_data->pid].is_dead);
-		//gen_data->philos[gen_data->pid].is_dead = 1;
+		eat(philos);
+		if (philos->state != 0)
+		{
+			philos->state = 4;
+			philos_log("is sleeping", philos);
+			usleep(philos->gen_data->t_sleep * 1000);
+		}
 	}
-	printf("llegó: %d", gen_data->pid);
-	
-	//increment_pid(gen_data);
-	
 	return (0);
 }
-
 
 int	main(int arg, char **args)
 {
 	t_philos_data	*philos;
-	int		i;
+	t_gen_data	*gen_data;
 
+	gen_data = malloc(sizeof(t_gen_data ) * 1);
 	philos = malloc(sizeof(t_philos_data) * ft_atoi(args[1]));
-	i = 0;
-	if (arg != 2)
-		return (0);
-	preliminar(philos, args);
-	/*
-	while (i < ft_atoi(args[1]))
-	{
-		printf("r:%d l:%d\n", philos[i].r_fork, philos[i].l_fork);
-		i++;
-	}
-	*/
-//	printf("%d\n", gen_data->n_philo);
-	while (i < gen_data->n_philo)
-	{
-		if (0 != pthread_create(&gen_data->philos[i].pthread, NULL, routine, philos))
-			printf("no se creo bien el hilo");
-		i++;
-	}
-	i = 0;
-	while (gen_data->pid < gen_data->n_philo)
-	{
-		pthread_join(gen_data->philos[i].pthread, NULL);
-		i++;
-	}
+	fill_gen_philos(gen_data, ft_atoi(args[1]), args);
+	preliminar(philos, args, gen_data, arg);
+	
+	create_threads(args, philos);
+	join_threads(args, philos);
 	return (0);
 }
