@@ -63,6 +63,8 @@ void    preliminar(t_philos_data *philos, char **s, t_gen_data *alakazam, int ar
 
         if (arg < 5 || arg > 6)
                 exit (0);
+		if (ft_atoi(s[1]) == 1 || ft_atoi(s[1]) == 0)
+			exit (0);
         i = 0;
         n = ft_atoi(s[1]);
         piddy_gonzalez(philos, n);

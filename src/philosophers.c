@@ -48,54 +48,80 @@ int	finder(char *s1, char *s2)
 	return (0);
 }
 
+int dr_time(struct timeval philo_time, struct timeval start_time)
+{
+	unsigned long long i;
+
+	i = ((philo_time.tv_sec * 1000) + (philo_time.tv_usec / 1000)) - (start_time.tv_sec * 1000 + start_time.tv_usec / 1000);
+	return (i);
+}
+
+
+
+int	magic(t_philos_data *philos)
+{
+	int	i;
+
+	i = philos->gen_data->t_die - (philos->gen_data->t_eat + philos->gen_data->t_sleep);
+	return (i);
+}
+
+void	case_think(t_philos_data *philos)
+{
+	while (dr_time(philos->philo_time, philos->helper) < magic(philos))
+	{
+		gettimeofday(&philos->philo_time, NULL);
+		if (dr_time(philos->philo_time, philos->helper) >= magic(philos) - 20)
+			break ;
+		usleep(5);
+	}
+}
 
 
 void	philos_log(char *s, t_philos_data *philos)
 {
 	pthread_mutex_lock(&philos->gen_data->wrt);
 	gettimeofday(&philos->philo_time, NULL);
-	if (finder(s, "is eating") == 1)
+	if (dr_time(philos->philo_time, philos->helper) >= philos->gen_data->t_die)
 	{
-		if (((philos->philo_time.tv_sec * 1000) + (philos->philo_time.tv_usec / 1999)) - (philos->gen_data->start_time.tv_sec * 1000 + philos->gen_data->start_time.tv_usec / 1000) >= philos->gen_data->t_die)
-		{
-			philos->state = 0;
-			printf("%ldms %d %s\n", (philos->philo_time.tv_sec * 1000 + philos->philo_time.tv_usec / 1000) - (philos->gen_data->start_time.tv_sec * 1000 + philos->gen_data->start_time.tv_usec / 1000) , philos->piddy, "dead");
-			exit (0);
-		}
+		printf("ey");
+		philos->state = 0;
+		printf("%dms %d %s\n",dr_time(philos->philo_time, philos->helper), philos->piddy, s);
+		pthread_mutex_unlock(&philos->gen_data->wrt);
+		return ;
 	}
-//		check_dead(philos);
-	//printf("philos_time:%ldstart:%ldresta:%ldsujeto:%daccion:%s\n", philos->philo_time.tv_sec, philos->gen_data->start_time.tv_sec, (philos->philo_time.tv_usec / 1000) - (philos->helper.tv_usec / 1000), philos->piddy, s);
 	printf("%ldms %d %s\n", (philos->philo_time.tv_sec * 1000 + philos->philo_time.tv_usec / 1000) - (philos->gen_data->start_time.tv_sec * 1000 + philos->gen_data->start_time.tv_usec / 1000) , philos->piddy, s);
 	if (finder(s, "is eating") == 1)
 		gettimeofday(&philos->helper, NULL);
 	pthread_mutex_unlock(&philos->gen_data->wrt);
+
 }
 
-void	check_dead(t_philos_data *philos)
+void	check_dead(t_philos_data *philos, char **args, t_gen_data *gen_data)
 {
-	pthread_mutex_lock(&philos->gen_data->util);
-	gettimeofday(&philos->philo_time, NULL);
-	//printf("--%ld--\n", (philos->philo_time.tv_usec - philos->helper.tv_usec));
-	if ((philos->philo_time.tv_usec - philos->helper.tv_usec) >= philos->gen_data->t_die * 1000)
+	int	i;
+
+	i = 0;
+	while (1)
 	{
-		philos->state = 0;
-		printf("%ldms %d %s\n", (philos->philo_time.tv_sec * 1000) - (philos->gen_data->start_time.tv_sec * 1000) , philos->piddy, "dead");
-		pthread_mutex_unlock(&philos->gen_data->util);
-		exit (0);
-	//	exit(0);
+		while (i < ft_atoi(args[1]))
+		{
+			if (philos[i].state == 0)
+				break ;
+			i++;
+		}
+		i = 0;
 	}
-	if (philos->n_eat == philos->gen_data->n_p_eat && philos->gen_data->n_p_eat > 0)
-	{
-		philos->state = 0;
-	}
-	pthread_mutex_unlock(&philos->gen_data->util);
+	join_threads(args, philos);
+	needed_free(gen_data, philos, ft_atoi(args[1]));
+	exit (0);
 }
 
 
 
 void	eat(t_philos_data *philos)
 {
-	//philos_log("is thinking", philos);
+//	case_think(philos);
 	pthread_mutex_lock(&philos->gen_data->forks[philos->r_fork]);
 	pthread_mutex_lock(&philos->gen_data->forks[philos->l_fork]);
 	philos->n_eat++;
@@ -122,13 +148,13 @@ void	*routine(void	*tra)
 			philos->state = 4;
 			philos_log("is sleeping", philos);
 			usleep(philos->gen_data->t_sleep * 1000);
-			philos_log("is thinking", philos);
+			//philos_log("is thinking", philos);
 		}
-		else if (philos->state == 0)
+/*		else if (philos->state == 0)
 		{
 			philos_log("dead", philos);
 			exit (0);
-		}
+		}*/
 	}
 	return (0);
 }
@@ -167,8 +193,6 @@ int	main(int arg, char **args)
 	preliminar(philos, args, gen_data, arg);
 	
 	create_threads(args, philos);
-	check_dead_main(philos, ft_atoi(args[1]));
-	join_threads(args, philos);
-	needed_free(gen_data, philos, ft_atoi(args[1]));
+	check_dead(philos, args, gen_data);
 	return (0);
 }

@@ -18,7 +18,7 @@
 typedef struct	general_data{
 	pthread_t	*n_philos;
 	int		n_philo;
-	int		t_die;
+	int	t_die;
 	int		t_eat;
 	int		t_sleep;
 	int		n_philos_dead;
@@ -52,7 +52,6 @@ void    fill_forks(t_philos_data *philos, int n);
 void    fill_gen_philos(t_gen_data *gen_data, int n, char **s);
 void    piddy_gonzalez(t_philos_data *philos, int n);
 void    preliminar(t_philos_data *philos, char **s, t_gen_data *alakazam, int arg);
-void	check_dead(t_philos_data *philos);
 
 
 #endif
