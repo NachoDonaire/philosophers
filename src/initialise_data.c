@@ -24,7 +24,8 @@ void    fill_gen_philos(t_gen_data *gen_data, int n, char **s)
         int     i;
 
 	//gen_data->end_time = malloc(sizeof(struct timeval) * (n + 1));
-        gettimeofday(&gen_data->start_time, NULL);
+        //gettimeofday(&gen_data->helper, NULL);
+	gettimeofday(&gen_data->start_time, NULL);
         i = 0;
         gen_data->t_die = 23;
         gen_data->forks = malloc(sizeof(pthread_mutex_t ) * (n + 1));
