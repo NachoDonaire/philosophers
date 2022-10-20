@@ -36,6 +36,7 @@ void    fill_gen_philos(t_gen_data *gen_data, int n, char **s)
         gen_data->t_die = ft_atoi(s[2]);
         gen_data->t_eat = ft_atoi(s[3]);
         gen_data->t_sleep = ft_atoi(s[4]);
+		gen_data->dead = 1;
 	if (s[5])
 		gen_data->n_p_eat = ft_atoi(s[5]);
 }
@@ -50,8 +51,9 @@ void    piddy_gonzalez(t_philos_data *philos, int n)
         {
                 philos[i].piddy = i;
                 philos[i].state = 1;
-		gettimeofday(&philos[i].helper, NULL);
-		philos[i].n_eat = 0;
+				gettimeofday(&philos[i].helper, NULL);
+				philos[i].n_eat = 0;
+				philos[i].is_dead = 0;
                 i++;
         }
 }

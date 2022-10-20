@@ -26,6 +26,7 @@ typedef struct	general_data{
 	struct	timeval	start_time;
 	struct	timeval	end_time;
 	int		n_p_eat;
+	int		dead;
 	pthread_mutex_t	wrt;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	util;
