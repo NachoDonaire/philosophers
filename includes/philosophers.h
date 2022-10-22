@@ -65,6 +65,7 @@ void	needed_free(t_philos_data *philos, t_gen_data *gen_data);
 int	check_write(t_philos_data *philos);
 int	nhummy(t_philos_data *philos);
 int	check_error(char **s, int arg);
+void	sleepy(struct timeval helper, int time);
 
 
 #endif

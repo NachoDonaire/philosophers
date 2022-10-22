@@ -35,10 +35,7 @@ void    sleepy(struct timeval helper, int time)
         struct timeval  current;
 
         gettimeofday(&current, NULL);
-        while (dr_time(current, helper) < time)
-        {
-                usleep(5);
-        }
+        while (dr_time(current, helper) < time);
 }
 
 int     official_check(t_philos_data *philos)
