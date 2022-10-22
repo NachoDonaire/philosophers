@@ -27,16 +27,18 @@ void    fill_gen_philos(t_gen_data *gen_data, int n, char **s)
         //gettimeofday(&gen_data->helper, NULL);
 	gettimeofday(&gen_data->start_time, NULL);
         i = 0;
-        gen_data->t_die = 23;
         gen_data->forks = malloc(sizeof(pthread_mutex_t ) * (n + 1));
         while (i <= n)
                 pthread_mutex_init(&gen_data->forks[i++], NULL);
         pthread_mutex_init(&gen_data->wrt, NULL);
         pthread_mutex_init(&gen_data->util, NULL);
+	gen_data->n_philo = ft_atoi(s[1]);
         gen_data->t_die = ft_atoi(s[2]);
         gen_data->t_eat = ft_atoi(s[3]);
         gen_data->t_sleep = ft_atoi(s[4]);
-		gen_data->dead = 1;
+	gen_data->dead = 1;
+	gen_data->n_eat = 0;
+	//gen_data->n_p_dead = 0;
 	if (s[5])
 		gen_data->n_p_eat = ft_atoi(s[5]);
 }
@@ -52,7 +54,6 @@ void    piddy_gonzalez(t_philos_data *philos, int n)
                 philos[i].piddy = i;
                 philos[i].state = 1;
 				gettimeofday(&philos[i].helper, NULL);
-				philos[i].n_eat = 0;
 				philos[i].is_dead = 0;
                 i++;
         }
@@ -65,8 +66,8 @@ void    preliminar(t_philos_data *philos, char **s, t_gen_data *alakazam, int ar
 
         if (arg < 5 || arg > 6)
                 exit (0);
-		if (ft_atoi(s[1]) == 1 || ft_atoi(s[1]) == 0)
-			exit (0);
+	if (ft_atoi(s[1]) == 1 || ft_atoi(s[1]) == 0)
+		exit (0);
         i = 0;
         n = ft_atoi(s[1]);
         piddy_gonzalez(philos, n);
