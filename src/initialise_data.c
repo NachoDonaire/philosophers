@@ -32,6 +32,8 @@ void    fill_gen_philos(t_gen_data *gen_data, int n, char **s)
                 pthread_mutex_init(&gen_data->forks[i++], NULL);
         pthread_mutex_init(&gen_data->wrt, NULL);
         pthread_mutex_init(&gen_data->util, NULL);
+        pthread_mutex_init(&gen_data->jutels, NULL);
+        pthread_mutex_init(&gen_data->zajo, NULL);
 	gen_data->n_philo = ft_atoi(s[1]);
         gen_data->t_die = ft_atoi(s[2]);
         gen_data->t_eat = ft_atoi(s[3]);

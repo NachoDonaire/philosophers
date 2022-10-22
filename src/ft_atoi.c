@@ -36,6 +36,6 @@ int	ft_atoi(const char *str)
 	if (num > 2147483647 && sign > 0)
 		return (-1);
 	if (num > 2147483648 && sign < 0)
-		return (0);
+		return (-1);
 	return ((int)(sign * num));
 }

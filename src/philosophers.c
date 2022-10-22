@@ -1,5 +1,12 @@
 #include "../includes/philosophers.h"
 
+void	thinking(t_philos_data *philos)
+{
+	while (tactec(philos->helper) < (philos->gen_data->t_eat + philos->gen_data->t_sleep) - 100)
+		usleep(500);
+}
+
+
 void	philos_log(char *s, t_philos_data *philos)
 {
 	pthread_mutex_lock(&philos->gen_data->wrt);
@@ -16,6 +23,7 @@ void	philos_log(char *s, t_philos_data *philos)
 	{
 		gettimeofday(&philos->helper, NULL);
 		philos->gen_data->n_eat++;
+		pthread_mutex_unlock(&philos->gen_data->wrt);
 		if (nhummy(philos) == 1)
 		{
 			philos->gen_data->dead = 0;
@@ -23,10 +31,15 @@ void	philos_log(char *s, t_philos_data *philos)
 			philos_log("dead", philos);
 		}
 		//sleepy(philos->helper, philos->gen_data->t_eat);
-		pthread_mutex_unlock(&philos->gen_data->wrt);
 		usleep(philos->gen_data->t_eat * 1000);
 		return ;
 	}
+	else if (finder(s, "is thinking") == 1 && philos->gen_data->dead == 1)
+	{
+		pthread_mutex_unlock(&philos->gen_data->wrt);
+		thinking(philos);
+		return ;
+	}	
 	else if (finder(s, "is sleeping") == 1 && philos->gen_data->dead == 1)
 	{
 		pthread_mutex_unlock(&philos->gen_data->wrt);
@@ -89,6 +102,11 @@ int	main(int arg, char **args)
 	t_philos_data	*philos;
 	t_gen_data	*gen_data;
 
+	if (check_error(args, arg) == 1)
+	{
+		printf("Invalid input");
+		return (0);
+	}
 	gen_data = malloc(sizeof(t_gen_data ) * 1);
 	philos = malloc(sizeof(t_philos_data) * ft_atoi(args[1]));
 	fill_gen_philos(gen_data, ft_atoi(args[1]), args);

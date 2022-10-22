@@ -30,6 +30,7 @@ typedef struct	general_data{
 	int		dead;
 	int		n_eat;
 	pthread_mutex_t	wrt;
+	pthread_mutex_t	zajo;
 	pthread_mutex_t	jutels;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	util;
@@ -63,6 +64,7 @@ int     tactec(struct timeval helper);
 void	needed_free(t_philos_data *philos, t_gen_data *gen_data);
 int	check_write(t_philos_data *philos);
 int	nhummy(t_philos_data *philos);
+int	check_error(char **s, int arg);
 
 
 #endif
