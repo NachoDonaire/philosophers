@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   utils_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ndonaire <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/24 13:39:54 by ndonaire          #+#    #+#             */
-/*   Updated: 2022/10/24 14:56:03 by ndonaire         ###   ########.fr       */
+/*   Created: 2022/10/24 13:52:26 by ndonaire          #+#    #+#             */
+/*   Updated: 2022/10/24 15:10:40 by ndonaire         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-void	needed_free(t_philos_data *philos, t_gen_data *gen_data)
+int	tactec(struct timeval helper)
 {
-	int	i;
+	struct timeval	eff;
 
-	i = 0;
-	while (i < gen_data->n_philo)
-		pthread_mutex_destroy(&gen_data->forks[i++]);
-	pthread_mutex_destroy(&gen_data->util);
-	pthread_mutex_destroy(&gen_data->jutels);
-	pthread_mutex_destroy(&gen_data->wrt);
-	if (gen_data->n_philos)
-		free(gen_data->n_philos);
-	if (gen_data->forks)
-		free(gen_data->forks);
-	free(gen_data);
-	free(philos);
+	gettimeofday(&eff, NULL);
+	return ((eff.tv_sec * 1000 + eff.tv_usec / 1000)
+		- (helper.tv_sec * 1000 + helper.tv_usec / 1000));
+}
+
+int	nhummy(t_philos_data *philos)
+{
+	if (philos->gen_data->n_eat >= (philos->gen_data->n_p_eat
+			* philos->gen_data->n_philo) && philos->gen_data->n_p_eat > 0)
+		return (1);
+	return (0);
 }

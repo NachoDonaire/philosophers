@@ -1,4 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error_management.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ndonaire <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/24 13:36:49 by ndonaire          #+#    #+#             */
+/*   Updated: 2022/10/24 13:39:50 by ndonaire         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/philosophers.h"
+
+int	check_argy(int arg)
+{
+	if (arg < 5 || arg > 6)
+		return (1);
+	return (0);
+}
+
+int	check_num(int arg, char **s)
+{
+	int	i;
+
+	i = 1;
+	while (i < arg)
+	{
+		if (ft_atoi(s[i]) < 0)
+			return (1);
+		i++;
+	}
+	return (0);
+}
 
 int	check_error(char **s, int arg)
 {
@@ -7,6 +40,8 @@ int	check_error(char **s, int arg)
 
 	i = 1;
 	y = 0;
+	if (check_argy(arg) == 1)
+		return (1);
 	while (i < arg)
 	{
 		while (s[i][y])
@@ -18,12 +53,5 @@ int	check_error(char **s, int arg)
 		y = 0;
 		i++;
 	}
-	i = 1;
-	while (i < arg)
-	{
-		if (ft_atoi(s[i]) < 0)
-			return (1);
-		i++;
-	}
-	return (0);
+	return (check_num(arg, s));
 }
