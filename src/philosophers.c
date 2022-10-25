@@ -20,20 +20,20 @@ void	philos_log(char *s, t_philos_data *philos)
 		death(philos);
 		return ;
 	}
-	if (philos->gen_data->dead == 1)
+	if (philos->gen_data->dead == -1)
 		printf("%dms %d %s\n", dr_time(philos->philo_time,
 				philos->gen_data->start_time), philos->piddy, s);
-	if (finder(s, "is eating") == 1 && philos->gen_data->dead == 1)
+	if (finder(s, "is eating") == 1 && philos->gen_data->dead == -1)
 	{
 		eating(philos);
 		return ;
 	}
-	else if (finder(s, "is thinking") == 1 && philos->gen_data->dead == 1)
+	else if (finder(s, "is thinking") == 1 && philos->gen_data->dead == -1)
 	{
 		thinking(philos);
 		return ;
 	}	
-	else if (finder(s, "is sleeping") == 1 && philos->gen_data->dead == 1)
+	else if (finder(s, "is sleeping") == 1 && philos->gen_data->dead == -1)
 	{
 		sleeping(philos);
 		return ;
@@ -46,7 +46,7 @@ void	check_dead(t_philos_data *philos, char **args)
 	int	i;
 
 	i = 0;
-	while (philos->gen_data->dead == 1)
+	while (philos->gen_data->dead == -1)
 	{
 		while (i < ft_atoi(args[1]))
 		{
@@ -64,6 +64,12 @@ void	eat(t_philos_data *philos)
 {
 	pthread_mutex_lock(&philos->gen_data->forks[philos->r_fork]);
 	philos_log("has taken a fork", philos);
+	if (philos->gen_data->n_philo == 1)
+	{
+		while (tactec(philos->helper) <= philos->gen_data->t_die)
+			;
+		return ;
+	}
 	pthread_mutex_lock(&philos->gen_data->forks[philos->l_fork]);
 	philos_log("has taken a fork", philos);
 	philos_log("is eating", philos);

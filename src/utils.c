@@ -54,7 +54,7 @@ void	sleepy(struct timeval helper, int time)
 int	official_check(t_philos_data *philos)
 {
 //	pthread_mutex_lock(&philos->gen_data->util);
-	if (philos->gen_data->dead == 1)
+	if (philos->gen_data->dead == -1)
 	{
 //		pthread_mutex_unlock(&philos->gen_data->util);
 		return (1);
