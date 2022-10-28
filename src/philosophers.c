@@ -52,7 +52,7 @@ void	check_dead(t_philos_data *philos, char **args)
 		{
 			if (tactec(philos[i].helper) >= ft_atoi(args[2]))
 			{
-				philos->gen_data->dead = i;
+				philos->gen_data->dead = i + 1;
 			}
 			i++;
 		}

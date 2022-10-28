@@ -1,13 +1,41 @@
 # philosophers
 
 ## What is philosophers
-There is a circle table. In this table we will have n philosophers sit around the table and n forks around them. Each philosopher has a right fork and a left fork. They will be in three states: eating, sleeping and thinking. To eat, a philosopher will need his right fork and his left fork. When they finish eating they will start sleeping and when they finish this last state they will think and start eating again. 
+We have a circle table and a number n of sitting philosophers around the big table. There are kind of rules in this table:
 
-Each philosopher represents a thread of a process. All of these program is developed in C and uses threads for each philosopher.
+- They can be in one of these thre states: thinking, sleeping or eating.
 
-This program has 4 arguments (5th is not required but admited) in this arguments we will set the number of philosophers and their time to eat, sleep and their death time from their last meal.
+- Each philosopher has a right fork and a left fork.
+
+- To eat, they will pick both of the forks of their sides.
+
+- Philosophers must eat and dont starve.
+
+- They dont know if other philosopher is going to die and they cant talk to each other.
+
+- All philosophers will fight for their survival.
+
+## In terms of code
+In this program, each philo is a thread. Mutex is used to make this program works.
 
 ## How to play with this program
 ```bash
-make; ./philo [number of philos] [time to die (ms)] [time to eat (ms)] [time to sleep (ms)] ([number of meals of each philo])
+make
 ```
+Then you will have an executable with a few arguments:
+
+1. [number of philosophers]
+2. [time to die (ms)]
+3. [time to eat (ms)]
+4. [time to sleep (ms)]
+5. [times every philosopher must eat(optional)]
+
+## Examples
+```bash
+./philo 4 410 200 200
+./philo 5 400 200 200
+./philo 1 200 200 200
+./philo 4 130 60 60  7
+```
+
+Enjoy!
