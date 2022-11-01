@@ -53,6 +53,7 @@ void	check_dead(t_philos_data *philos, char **args)
 			if (tactec(philos[i].helper) >= ft_atoi(args[2]))
 			{
 				philos->gen_data->dead = i + 1;
+				philos_log("dead", &philos[i]);
 			}
 			i++;
 		}
@@ -83,7 +84,7 @@ void	*routine(void	*tra)
 
 	philos = (t_philos_data *)tra;
 	if (philos->piddy % 2 != 0)
-		usleep(150);
+		usleep(1000);
 	while (official_check(philos) == 1)
 	{
 		eat(philos);

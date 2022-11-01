@@ -54,5 +54,5 @@ void	thinking(t_philos_data *philos)
 void	sleeping(t_philos_data *philos)
 {
 	pthread_mutex_unlock(&philos->gen_data->wrt);
-	sleepy(philos->helper, philos->gen_data->t_sleep);
+	sleepy(philos->helper, philos->gen_data->t_sleep + philos->gen_data->t_eat);
 }
